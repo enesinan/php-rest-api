@@ -98,6 +98,7 @@ Example Response:
     "email": "updatedemail@example.com"
 }
 ```
+![put](https://github.com/enesinan/php-rest-api/assets/72499839/288addae-1e44-4348-9854-6de068802ea4)
 
 
 ### DELETE /api/v1/form-submission/{id}
@@ -117,4 +118,5 @@ Example Response:
 }
 ```
 
+![delete2](https://github.com/enesinan/php-rest-api/assets/72499839/3a7af1f9-9d4f-4df8-86b9-de3c0deac104)
 
