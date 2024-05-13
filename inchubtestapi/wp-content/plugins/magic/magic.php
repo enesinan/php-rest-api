@@ -35,7 +35,7 @@ function setup_table()
         PRIMARY KEY (id)
     )";
 
-    require_once (ABSPATH . "wp-admin/includes/upgrade.php");
+    require (ABSPATH . "wp-admin/includes/upgrade.php");
     dbDelta($sql);
 }
 
@@ -109,6 +109,10 @@ function get_form_submissions_ens()
 
 function create_form_submission_ens($request)
 {
+    if (!name_validation($request["name"]) || !email_validation($request["email"])) {
+        return throw new Exception("not valid data");
+    }
+
     global $wpdb;
     $table_name = $wpdb->prefix . 'form_submissions';
 
@@ -123,8 +127,8 @@ function create_form_submission_ens($request)
     if ($rows) {
         $new_data = array(
             'id' => $wpdb->insert_id,
-            'name' => $request['name'],
-            'email' => $request['email']
+            'name' => esc_sql($request['name']),
+            'email' => sanitize_email($request['email'])
         );
         return $new_data;
     } else {
@@ -134,7 +138,7 @@ function create_form_submission_ens($request)
 
 function get_form_submission_ens($request)
 {
-    $id = $request['id'];
+    $id = intval($request['id']);
     global $wpdb;
     $table_name = $wpdb->prefix . 'form_submissions';
 
@@ -149,7 +153,11 @@ function get_form_submission_ens($request)
 
 function update_form_submission_ens($request)
 {
-    $id = $request['id'];
+    if (!name_validation($request["name"]) || !email_validation($request["email"])) {
+        return throw new Exception("not valid data");
+    }
+
+    $id = intval($request['id']);
     $name = $request["name"];
     $email = $request["email"];
     global $wpdb;
@@ -176,9 +184,9 @@ function update_form_submission_ens($request)
     }
 
     $updated_data = array(
-        'id' => $id,
-        'name' => $name,
-        'email' => $email
+        'id' => intval($id),
+        'name' => esc_sql($name),
+        'email' => sanitize_email($email)
     );
 
     return $updated_data;
@@ -186,7 +194,7 @@ function update_form_submission_ens($request)
 
 function delete_form_submission_ens($request)
 {
-    $id = $request['id'];
+    $id = intval($request['id']);
     global $wpdb;
     $table_name = $wpdb->prefix . 'form_submissions';
 
@@ -200,6 +208,26 @@ function delete_form_submission_ens($request)
         'status' => 'success',
         'message' => 'Successfully deleted'
     );
-   
+
     return $response;
+}
+
+function name_validation($param)
+{
+    $clear_param = esc_sql($param);
+    if (preg_match('/^[a-zA-Z\s]+$/u', $clear_param)) {
+        return true;
+    }
+
+    return false;
+}
+
+function email_validation($param)
+{
+    $clear_param = sanitize_email($param);
+    if ((filter_var($clear_param, FILTER_VALIDATE_EMAIL))) {
+        return true;
+    }
+
+    return false;
 }
