@@ -13,13 +13,13 @@ This is a simple documentation for a REST API, including endpoints and example r
 
 **Example Request:**
 
-```http
+
 GET /api/v1/form-submissions
 
 Example Response:
 
 json
-```
+```http
 [
     {
         "id": 1,
@@ -42,11 +42,11 @@ Description: Create a new form submission by sending a POST request. Include a J
 
 Example Request:
 
-http
+
 
 POST /api/v1/form-submissions
 Content-Type: application/json
-```
+```http
 {
     "name": "John Doe",
     "email": "johndoe@example.com"
@@ -54,8 +54,8 @@ Content-Type: application/json
 ```
 Example Response:
 
-json
-```
+
+```json
 {
     "id": 7,
     "name": "John Doe",
@@ -71,13 +71,12 @@ Description: Retrieve a specific form submission by sending a GET request. Repla
 Example Request:
 
 http
-<button><svg><path></path></svg><span>Copy code</span><span></span></button>
 GET /api/v1/form-submission/7
 
 Example Response:
 
-json
-```
+
+```json
 {
     "id": 7,
     "name": "John Doe",
