@@ -1,4 +1,4 @@
-![image](https://github.com/enesinan/php-rest-api/assets/72499839/c617261e-e244-41b9-922c-c9f0a66ec36e)## REST API Documentation
+## REST API Documentation
 
 This is a simple documentation for a REST API, including endpoints and example requests and responses.
 
