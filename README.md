@@ -1,4 +1,4 @@
-## REST API Documentation
+![image](https://github.com/enesinan/php-rest-api/assets/72499839/c617261e-e244-41b9-922c-c9f0a66ec36e)## REST API Documentation
 
 This is a simple documentation for a REST API, including endpoints and example requests and responses.
 
@@ -74,6 +74,8 @@ Example Response:
     "email": "johndoe@example.com"
 }
 ```
+![getid](https://github.com/enesinan/php-rest-api/assets/72499839/0acb66df-e9d5-47e1-9f96-44e6f918f103)
+
 ### PUT /api/v1/form-submission/{id}
 
 **Endpoint:** `http://localhost/inchubtestapi/wp-json/api/v1/form-submission/{id}`
@@ -96,6 +98,9 @@ Example Response:
     "email": "updatedemail@example.com"
 }
 ```
+![put](https://github.com/enesinan/php-rest-api/assets/72499839/27fcc54e-d706-4074-9ce8-b9dc113c9ef1)
+
+
 ### DELETE /api/v1/form-submission/{id}
 
 **Endpoint:** `http://localhost/inchubtestapi/wp-json/api/v1/form-submission/{id}`
@@ -112,3 +117,6 @@ Example Response:
     "message": "Successfully deleted"
 }
 ```
+
+![delete](https://github.com/enesinan/php-rest-api/assets/72499839/96cb71d4-2479-4fab-abfa-09749d954ee7)
+
