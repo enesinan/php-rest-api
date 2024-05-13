@@ -19,7 +19,7 @@ GET /api/v1/form-submissions
 Example Response:
 
 json
-<button><svg><path></path></svg><span>Copy code</span><span></span></button>
+```
 [
     {
         "id": 1,
@@ -33,7 +33,7 @@ json
     },
     ...
 ]
-
+```
 POST /api/v1/form-submissions
 
 Endpoint: http://localhost/inchubtestapi/wp-json/api/v1/form-submissions
@@ -43,25 +43,25 @@ Description: Create a new form submission by sending a POST request. Include a J
 Example Request:
 
 http
-<button><svg><path></path></svg><span>Copy code</span><span></span></button>
+
 POST /api/v1/form-submissions
 Content-Type: application/json
-
+```
 {
     "name": "John Doe",
     "email": "johndoe@example.com"
 }
-
+```
 Example Response:
 
 json
-<button><svg><path></path></svg><span>Copy code</span><span></span></button>
+```
 {
     "id": 7,
     "name": "John Doe",
     "email": "johndoe@example.com"
 }
-
+```
 GET /api/v1/form-submission/{id}
 
 Endpoint: http://localhost/inchubtestapi/wp-json/api/v1/form-submission/{id}
@@ -77,13 +77,13 @@ GET /api/v1/form-submission/7
 Example Response:
 
 json
-<button><svg><path></path></svg><span>Copy code</span><span></span></button>
+```
 {
     "id": 7,
     "name": "John Doe",
     "email": "johndoe@example.com"
 }
-
+```
 PUT /api/v1/form-submission/{id}
 
 Endpoint: http://localhost/inchubtestapi/wp-json/api/v1/form-submission/{id}
@@ -93,25 +93,25 @@ Description: Update a specific form submission by sending a PUT request. Replace
 Example Request:
 
 http
-<button><svg><path></path></svg><span>Copy code</span><span></span></button>
+
 PUT /api/v1/form-submission/1
 Content-Type: application/json
-
+```
 {
     "name": "Updated Name",
     "email": "updatedemail@example.com"
 }
-
+```
 Example Response:
 
 json
-<button><svg><path></path></svg><span>Copy code</span><span></span></button>
+```
 {
     "id": 1,
     "name": "Updated Name",
     "email": "updatedemail@example.com"
 }
-
+```
 DELETE /api/v1/form-submission/{id}
 
 Endpoint: http://localhost/inchubtestapi/wp-json/api/v1/form-submission/{id}
