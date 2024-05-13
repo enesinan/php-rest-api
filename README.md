@@ -102,6 +102,7 @@ Example Response:
 
 ```
 {
-    "message": "Form submission with ID 1 deleted."
+    "status": "success",
+    "message": "Successfully deleted"
 }
 ```
