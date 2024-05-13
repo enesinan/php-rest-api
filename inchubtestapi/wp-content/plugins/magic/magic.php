@@ -119,7 +119,17 @@ function create_form_submission_ens($request)
             'email' => $request['email'],
         )
     );
-    return $rows;
+
+    if ($rows) {
+        $new_data = array(
+            'id' => $wpdb->insert_id,
+            'name' => $request['name'],
+            'email' => $request['email']
+        );
+        return $new_data;
+    } else {
+        return new WP_Error('insert_failed', 'can not post data', array('status' => 500));
+    }
 }
 
 function get_form_submission_ens($request)
@@ -165,7 +175,13 @@ function update_form_submission_ens($request)
         return new WP_Error('not_found', 'not found any', array('status' => 404));
     }
 
-    return $results;
+    $updated_data = array(
+        'id' => $id,
+        'name' => $name,
+        'email' => $email
+    );
+
+    return $updated_data;
 }
 
 function delete_form_submission_ens($request)
@@ -180,5 +196,10 @@ function delete_form_submission_ens($request)
         return new WP_Error('not_found', 'not found any', array('status' => 404));
     }
 
-    return $result;
+    $response = array(
+        'status' => 'success',
+        'message' => 'Successfully deleted'
+    );
+   
+    return $response;
 }
