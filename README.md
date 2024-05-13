@@ -2,7 +2,7 @@
 
 This is a simple documentation for a REST API, including endpoints and example requests and responses.
 
-GET /api/v1/form-submissions
+```json GET /api/v1/form-submissions ```
 
 Endpoint: http://localhost/inchubtestapi/wp-json/api/v1/form-submissions
 
