@@ -54,6 +54,9 @@ Example Response:
     "email": "johndoe@example.com"
 }
 ```
+![post](https://github.com/enesinan/php-rest-api/assets/72499839/4c8e9f95-5f42-4379-9253-99cf3471a6a3)
+
+
 ### GET /api/v1/form-submission/{id}
 
 **Endpoint:** `http://localhost/inchubtestapi/wp-json/api/v1/form-submission/{id}`
