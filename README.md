@@ -27,6 +27,9 @@ Example Response:
     ...
 ]
 ```
+![1](https://github.com/enesinan/php-rest-api/assets/72499839/c1303d10-85cc-4669-8709-e13cbe69e8f4)
+
+
 ### POST /api/v1/form-submissions
 
 **Endpoint:** `http://localhost/inchubtestapi/wp-json/api/v1/form-submissions`
