@@ -120,3 +120,10 @@ Example Response:
 
 ![delete2](https://github.com/enesinan/php-rest-api/assets/72499839/3a7af1f9-9d4f-4df8-86b9-de3c0deac104)
 
+### VALIDATIONS
+
+![valid1](https://github.com/enesinan/php-rest-api/assets/72499839/b5f7a41c-fb46-4fdc-8344-61e4a41a9f7b)
+
+![valid2](https://github.com/enesinan/php-rest-api/assets/72499839/c0046964-621d-4227-ac5c-77ecd7bab39a)
+
+
