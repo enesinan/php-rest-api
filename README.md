@@ -1,17 +1,19 @@
-# REST API Documentation
+
+markdown
+<button><svg><path></path></svg><span>Copy code</span><span></span></button>
+## REST API Documentation
 
 This is a simple documentation for a REST API, including endpoints and example requests and responses.
 
-```json GET /api/v1/form-submissions ```
+### GET /api/v1/form-submissions
 
-Endpoint: http://localhost/inchubtestapi/wp-json/api/v1/form-submissions
+**Endpoint:** `http://localhost/inchubtestapi/wp-json/api/v1/form-submissions`
 
-Description: Retrieve a list of all form submissions by sending a GET request.
+**Description:** Retrieve a list of all form submissions by sending a GET request.
 
-Example Request:
+**Example Request:**
 
-http
-<button><svg><path></path></svg><span>Copy code</span><span></span></button>
+```http
 GET /api/v1/form-submissions
 
 Example Response:
@@ -129,6 +131,4 @@ json
 {
     "message": "Form submission with ID 1 deleted."
 }
-
-
 
