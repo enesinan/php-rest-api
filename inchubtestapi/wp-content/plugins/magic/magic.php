@@ -28,7 +28,7 @@ function setup_table()
     global $wpdb;
     $table_name = $wpdb->prefix . 'form_submissions';
 
-    $sql = "CREATE TABLE `$table_name`(
+    $sql = "CREATE TABLE $table_name(
         id INT(9) NOT NULL AUTO_INCREMENT,
         name varchar(99) NOT NULL,
         email varchar(99) NOT NULL,
@@ -93,18 +93,43 @@ function register_routes()
         )
     );
 }
-// set unique identifier to all functions with _ens, for prevent the plugin conflictions 
-function get_form_submissions_ens()
+
+function pdo_connection()
 {
     global $wpdb;
-    $table_name = $wpdb->prefix . 'form_submissions';
+    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME;
+    $options = array(
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    );
 
-    $results = $wpdb->get_results("SELECT * FROM $table_name");
-
-    if (empty($results)) {
-        return new WP_Error('not_found', 'not found any', array('status' => 404));
+    try {
+        $pdo = new PDO($dsn, DB_USER, DB_PASSWORD, $options);
+        return $pdo;
+    } catch (PDOException $e) {
+        return new WP_Error('database_connection_failed', 'Database connection failed: ' . $e->getMessage());
     }
-    return $results;
+}
+
+function get_form_submissions_ens()
+{
+    $pdo = pdo_connection();
+    if (is_wp_error($pdo)) {
+        return $pdo;
+    }
+    global $wpdb;
+    try {
+        $stmt = $pdo->query("SELECT * FROM {$wpdb->prefix}form_submissions");
+        $results = $stmt->fetchAll();
+
+        if (empty($results)) {
+            return new WP_Error('not_found', 'not found any', array('status' => 404));
+        }
+        return $results;
+    } catch (PDOException $e) {
+        return new WP_Error('database_query_failed', 'Database query failed: ' . $e->getMessage());
+    }
 }
 
 function create_form_submission_ens($request)
@@ -113,42 +138,50 @@ function create_form_submission_ens($request)
         return throw new Exception("not valid data");
     }
 
+    $pdo = pdo_connection();
+    if (is_wp_error($pdo)) {
+        return $pdo;
+    }
     global $wpdb;
-    $table_name = $wpdb->prefix . 'form_submissions';
+    try {
+        $stmt = $pdo->prepare("INSERT INTO {$wpdb->prefix}form_submissions (name, email) VALUES (:name, :email)");
+        $stmt->bindParam(':name', $request['name']);
+        $stmt->bindParam(':email', $request['email']);
+        $stmt->execute();
 
-    $rows = $wpdb->insert(
-        $table_name,
-        array(
-            'name' => $request['name'],
-            'email' => $request['email'],
-        )
-    );
-
-    if ($rows) {
         $new_data = array(
-            'id' => $wpdb->insert_id,
+            'id' => $pdo->lastInsertId(),
             'name' => esc_sql($request['name']),
             'email' => sanitize_email($request['email'])
         );
         return $new_data;
-    } else {
-        return new WP_Error('insert_failed', 'can not post data', array('status' => 500));
+    } catch (PDOException $e) {
+        return new WP_Error('insert_failed', 'can not post data: ' . $e->getMessage(), array('status' => 500));
     }
 }
 
 function get_form_submission_ens($request)
 {
     $id = intval($request['id']);
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'form_submissions';
-
-    $results = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . $table_name . ' WHERE id=%d', $id));
-
-    if (empty($results)) {
-        return new WP_Error('not_found', 'not found any', array('status' => 404));
+    $pdo = pdo_connection();
+    if (is_wp_error($pdo)) {
+        return $pdo;
     }
+    global $wpdb;
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM {$wpdb->prefix}form_submissions WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch();
 
-    return $results[0];
+        if (empty($result)) {
+            return new WP_Error('not_found', 'not found any', array('status' => 404));
+        }
+
+        return $result;
+    } catch (PDOException $e) {
+        return new WP_Error('database_query_failed', 'Database query failed: ' . $e->getMessage());
+    }
 }
 
 function update_form_submission_ens($request)
@@ -160,56 +193,66 @@ function update_form_submission_ens($request)
     $id = intval($request['id']);
     $name = $request["name"];
     $email = $request["email"];
+    $pdo = pdo_connection();
+    if (is_wp_error($pdo)) {
+        return $pdo;
+    }
     global $wpdb;
-    $table_name = $wpdb->prefix . 'form_submissions';
+    try {
+        if (empty($email) && empty($name)) {
+            return "nothing changed";
+        } else if (empty($email)) {
+            $stmt = $pdo->prepare("UPDATE {$wpdb->prefix}form_submissions SET name = :name WHERE id = :id");
+            $stmt->bindParam(':name', $name);
+        } else if (empty($name)) {
+            $stmt = $pdo->prepare("UPDATE {$wpdb->prefix}form_submissions SET email = :email WHERE id = :id");
+            $stmt->bindParam(':email', $email);
+        } else {
+            $stmt = $pdo->prepare("UPDATE {$wpdb->prefix}form_submissions SET name = :name, email = :email WHERE id = :id");
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':email', $email);
+        }
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
 
-    if (empty($email) && empty($name)) {
-        return "nothing changed";
-    } else if (empty($email)) {
-        $data = array('name' => $name);
-    } else if (empty($name)) {
-        $data = array('email' => $email);
-    } else {
-        $data = array('name' => $name, 'email' => $email);
+        $updated_data = array(
+            'id' => intval($id),
+            'name' => esc_sql($name),
+            'email' => sanitize_email($email)
+        );
+
+        return $updated_data;
+    } catch (PDOException $e) {
+        return new WP_Error('database_query_failed', 'Database query failed: ' . $e->getMessage());
     }
-
-    $results = $wpdb->update(
-        $table_name,
-        $data,
-        array('id' => $id)
-    );
-
-    if ($results === false) {
-        return new WP_Error('not_found', 'not found any', array('status' => 404));
-    }
-
-    $updated_data = array(
-        'id' => intval($id),
-        'name' => esc_sql($name),
-        'email' => sanitize_email($email)
-    );
-
-    return $updated_data;
 }
 
 function delete_form_submission_ens($request)
 {
     $id = intval($request['id']);
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'form_submissions';
-
-    $result = $wpdb->delete($table_name, array('id' => $id));
-
-    if ($result === 0) {
-        return new WP_Error('not_found', 'not found any', array('status' => 404));
+    $pdo = pdo_connection();
+    if (is_wp_error($pdo)) {
+        return $pdo;
     }
+    global $wpdb;
+    try {
+        $stmt = $pdo->prepare("DELETE FROM {$wpdb->prefix}form_submissions WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $result = $stmt->execute();
 
-    $response = array(
-        'status' => 'success',
-        'message' => 'Successfully deleted'
-    );
+        if ($result === 0) {
+            return new WP_Error('not_found', 'not found any', array('status' => 404));
+        }
 
-    return $response;
+        $response = array(
+            'status' => 'success',
+            'message' => 'Successfully deleted'
+        );
+
+        return $response;
+    } catch (PDOException $e) {
+        return new WP_Error('database_query_failed', 'Database query failed: ' . $e->getMessage());
+    }
 }
 
 function name_validation($param)
